@@ -29,6 +29,10 @@ const MemoryStore = expressSession.MemoryStore;
 // Express configuration
 const app = express();
 const nunjucksEnv = nunjucks.configure('views', { autoescape: true, express: app });
+
+nunjucksEnv.addGlobal('siteTitle', process.env.SITE_TITLE ? process.env.SITE_TITLE : 'Gemeente Amsterdam');
+nunjucksEnv.addGlobal('extraCssFile', process.env.EXTRA_CSS_FILE ? process.env.EXTRA_CSS_FILE : false);
+
 app.set('view engine', 'html');
 app.set('port', process.env.PORT || 4000);
 app.use(express.static(path.join(__dirname, 'public')));
