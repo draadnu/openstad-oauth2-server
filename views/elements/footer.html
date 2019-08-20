@@ -4,7 +4,7 @@
 
 			{% if clientDisclaimerUrl %}
 
-			<div class="col-md-3 col-sm-6 col-xs-12">
+			<div class="col-md-4 col-sm-6 col-xs-12">
 					<h2>Over deze site</h2>
 					<ul>
 						<li><a href="{{clientDisclaimerUrl}}">Disclaimer</a></li>
@@ -14,11 +14,11 @@
 
 
 				{% if clientProjectUrl %}
-				<div class="col-md-3  col-sm-6 col-xs-12">
+				<div class="col-md-4  col-sm-6 col-xs-12">
 					<h2>Meer informatie</h2>
 					<ul>
 						<li><a href="{{clientProjectUrl}}" target="_blank">
-							Volg de project­pagina op amsterdam.nl
+							Veelgestelde vragen
 						</a>
 					</li>
 					</ul>
@@ -26,23 +26,13 @@
 				{% endif %}
 
 				{% if clientEmail %}
-				<div class="col-md-3 col-sm-6 col-xs-12">
+				<div class="col-md-4 col-sm-6 col-xs-12">
 					<h2>Contact</h2>
 					<p>
 						Heeft u vragen over het gebruik van deze site?
 					</p>
 					<ul>
 						<li><a href="mailto:{{clientEmail}}">Mail uw vraag</a></li>
-					</ul>
-				</div>
-
-				<div class="col-md-3 col-sm-6 col-xs-12">
-					<h2>Reageren</h2>
-					<p>
-						Heeft u opmerkingen over deze site? Of tips?
-					</p>
-					<ul>
-						<li><a href="mailto:{{clientEmail}}">Stuur een reactie</a></li>
 					</ul>
 				</div>
 				{% endif %}
