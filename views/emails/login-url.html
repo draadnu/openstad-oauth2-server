@@ -10,17 +10,21 @@
 {% endif %}
 <br />
 
-Voor <a href="{{clientUrl}}" target="_blank">{{clientName}}</a>
-is een inloglink aangevraagd voor dit emailadres.
+<p>
+    Op <a href="{{clientUrl}}" style="color:#227b3c" target="_blank"><span class="il">Statenkwartier</span> Begroot</a>
+
+    is een inloglink aangevraagd voor dit emailadres.
+</p>
+
 Klik op de knop hieronder om automatisch in te loggen.
 <br />
 De knop is 60 minuten geldig.
 <br />
 <br />
-<p align="middle" style="margin: 10px 0;">
+<p align="left" style="margin: 10px 0;">
 	<a
     href="{{tokenUrl}}"
-    style="background-color: #ec0000; color:#fff; font-size: 15px; padding:15px 50px; text-decoration:none"
+    style="background-color: #227b3c; color:#fff; font-size: 15px; padding:15px 50px; text-decoration:none"
     target="_blank"
   >
 		<b>Log in</b>
@@ -28,15 +32,19 @@ De knop is 60 minuten geldig.
 </p>
 
 <br />
-<p style="font-size:0.7em;font-style:italic;margin-bottom:5em" align="center">
+<p style="font-size:0.7em;font-style:italic;margin-bottom:5emtext-align:left" align="center">
   Of gebruik deze link in je browser:
 	<br />
   <a
     href="{{tokenUrl}}"
-    style="color:#ec0000"
+    style="color:#227b3c"
     target="_blank"
   >
     {{tokenUrl}}
   </a>
+</p>
+
+<p style="font-size:0.7em;line-height:150%;padding-bottom:20px;text-align:left">
+    Geen account aangemaakt op <span class="il">Statenkwartier</span> Begroot? Dan heeft waarschijnlijk iemand anders per ongeluk jouw emailadres ingevuld. In dat geval kun je deze email negeren; er wordt niks mee gedaan.
 </p>
 {% endblock %}
