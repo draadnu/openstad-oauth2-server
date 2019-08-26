@@ -35,6 +35,7 @@ nunjucksEnv.addGlobal('extraCssFile', process.env.EXTRA_CSS_FILE ? process.env.E
 
 app.set('view engine', 'html');
 app.set('port', process.env.PORT || 4000);
+app.set('trust proxy', true);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cookieParser());
@@ -58,6 +59,7 @@ app.use(expressSession({
   saveUninitialized : true,
   resave            : true,
   secret            : config.session.secret,
+  proxy             : true,
   store             : new MemoryStore(),
   store             : new FileStore({
     ttl: 3600 * 24 * 31
