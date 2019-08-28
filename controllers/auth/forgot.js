@@ -106,7 +106,7 @@
          firstName: user.firstName,
          clientUrl: client.mainUrl,
          clientName: client.name,
-         loginTokenValidDuration: (env.process.LOGIN_TOKEN_VALID_DURATION_IN_TEXT ? env.process.LOGIN_TOKEN_VALID_DURATION_IN_TEXT : '60 minuten')
+         loginTokenValidDuration: (process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT ? process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT : '60 minuten')
        }
      });
    }
