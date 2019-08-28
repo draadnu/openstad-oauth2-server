@@ -77,3 +77,5 @@ images
 
 # Serverless directories
 .serverless
+
+.idea
