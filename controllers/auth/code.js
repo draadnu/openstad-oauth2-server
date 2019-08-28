@@ -6,6 +6,7 @@ const saltRounds        = 10;
 const hat               = require('hat');
 const login             = require('connect-ensure-login');
 const User              = require('../../models').User;
+const UserRole          = require('../../models').UserRole;
 const tokenUrl          = require('../../services/tokenUrl');
 const emailService      = require('../../services/email');
 const authCodeConfig    = require('../../config/auth').get(authType);
@@ -24,15 +25,15 @@ exports.login = (req, res, next) => {
     helpText: configAuthType.helpText ? configAuthType.helpText : authCodeConfig.helpText,
     buttonText: configAuthType.buttonText ? configAuthType.buttonText : authCodeConfig.buttonText,
     displaySidebar: configAuthType.displaySidebar ? configAuthType.displaySidebar : authCodeConfig.displaySidebar,
-    backUrl: authCodeConfig.displayBackbutton ? backUrl : false
+    backUrl: authCodeConfig.displayBackbutton ? backUrl : false,
+    redirect_uri: req.query.redirect_uri
   });
 }
 
 exports.postLogin = (req, res, next) => {
   passport.authenticate('uniqueCode', { session: false }, function(err, user, info) {
-    //if (err) { return next(err); }
 
-    // Redirect if it fails to the original e-mail screen
+    // Redirect if it fails to the original auth screen
     if (!user) {
       req.flash('error', {msg: authCodeConfig.errorMessage});
       return res.redirect(`${authCodeConfig.loginUrl}?clientId=${req.client.clientId}`);
@@ -41,12 +42,29 @@ exports.postLogin = (req, res, next) => {
     req.logIn(user, function(err) {
       if (err) { return next(err); }
 
-      req.brute.reset(() => {
-        // Redirect if it succeeds to authorize screen
-        const authorizeUrl = `/dialog/authorize?redirect_uri=${req.client.redirectUrl}&response_type=code&client_id=${req.client.clientId}&scope=offline`;
-        return res.redirect(authorizeUrl);
-      });
+      const redirectToAuthorize = () => {
+        req.brute.reset(() => {
+          const redirectUrl = req.query.redirect_uri ? req.query.redirect_uri : req.client.redirectUrl;
+          // Redirect if it succeeds to authorize screen
+          const authorizeUrl = `/dialog/authorize?redirect_uri=${redirectUrl}&response_type=code&client_id=${req.client.clientId}&scope=offline`;
+          return res.redirect(authorizeUrl);
+        });
+      }
 
+      if (req.client.config.defaultRoleId) {
+        new UserRole({
+          clientId: req.client.id,
+          roleId: req.client.config.defaultRoleId,
+          userId: user.id
+        })
+          .save()
+          .then(() => {
+            redirectToAuthorize();
+          })
+          .catch((err) => { next(err); });
+      } else {
+        redirectToAuthorize();
+      }
 
     });
   })(req, res, next);

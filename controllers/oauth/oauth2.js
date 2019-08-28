@@ -38,8 +38,8 @@ const expiresIn = { expires_in : config.token.expiresIn };
 server.grant(oauth2orize.grant.code((client, redirectURI, user, ares, done) => {
   const code = utils.createToken({ sub : user.id, exp : config.codeToken.expiresIn });
   db.authorizationCodes.save(code, client.id, redirectURI, user.id, client.scope)
-  .then(() => done(null, code))
-  .catch(err => done(err));
+    .then(() => done(null, code))
+    .catch(err => done(err));
 }));
 
 /**
@@ -122,8 +122,8 @@ server.exchange(oauth2orize.exchange.clientCredentials((client, scope, done) => 
   const expiration = config.token.calculateExpirationDate();
   // Pass in a null for user id since there is no user when using this grant type
   db.accessTokens.save(token, expiration, null, client.id, scope)
-  .then(() => done(null, token, null, expiresIn))
-  .catch(err => done(err));
+    .then(() => done(null, token, null, expiresIn))
+    .catch(err => done(err));
 }));
 
 /**
@@ -162,6 +162,9 @@ exports.authorization = [
   login.ensureLoggedIn(),
   server.authorization((clientID, redirectURI, scope, done) => {
 
+    //console.log('===> clientID', clientID);
+		//console.log('===> redirectURI', redirectURI);
+
     new Client({clientId: clientID})
     .fetch()
     .then((client) => {
@@ -176,12 +179,14 @@ exports.authorization = [
       const allowedDomains = client.allowedDomains ? JSON.parse(client.allowedDomains) : false;
       const redirectUrlHost = new URL(redirectURI).hostname;
 
+      //console.log('===> allowedDomains', allowedDomains, redirectUrlHost);
 
       // throw error if allowedDomains is empty or the redirectURI's host is not present in the allowed domains
       if (allowedDomains && allowedDomains.indexOf(redirectUrlHost) !== -1) {
+				//console.log('===> redirectURI', redirectURI);
         return done(null, client, redirectURI);
       } else {
-        console.log('===> Redirect host doesn\'t match the client host');
+        //console.log('===> Redirect host doesn\'t match the client host');
         throw new Error('Redirect host doesn\'t match the client host');
       }
 
@@ -201,6 +206,7 @@ exports.authorization = [
         if (client != null) {//  && client.trustedClient && client.trustedClient === true) {
           // This is how we short call the decision like the dialog below does
           server.decision({ loadTransaction: false }, (serverReq, callback) => {
+						console.log('ALLOW');
             callback(null, { allow: true });
           })(req, res, next);
         } else {

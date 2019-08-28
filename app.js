@@ -61,6 +61,7 @@ app.use(expressSession({
   secret            : config.session.secret,
   proxy             : true,
   store             : new MemoryStore(),
+//  store             : new MemoryStore(),
   store             : new FileStore({
     ttl: 3600 * 24 * 31
   }),
@@ -68,11 +69,12 @@ app.use(expressSession({
   cookie            : {
     maxAge: config.session.maxAge,
     secure: process.env.COOKIE_SECURE_OFF ===  'yes' ? false : true,
-    httpOnly: true,
-    sameSite: false
+    httpOnly: process.env.COOKIE_SECURE_OFF ===  'yes' ? false : true,
+    sameSite: process.env.COOKIE_SECURE_OFF ===  'yes' ? false : true
   },
 
 }));
+
 app.use(flash());
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -80,6 +82,9 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(expressValidator());
+
+
+
 
 // Passport configuration
 require('./auth');
