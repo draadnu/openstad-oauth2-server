@@ -53,7 +53,7 @@ passport.use('url', new TokenStrategy({
       /**
        * Only select tokens that are younger then 60 minutes
        */
-      const minutes = 60;
+      const minutes = (process.env.LOGIN_TOKEN_VALID_DURATION_IN_MINUTES ? process.env.LOGIN_TOKEN_VALID_DURATION_IN_MINUTES : 60);
       const msForAMinute = 60000;
       const date = new Date();
       const timeAgo = new Date(date.setTime(date.getTime() - (minutes * msForAMinute)));

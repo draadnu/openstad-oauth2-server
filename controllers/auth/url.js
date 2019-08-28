@@ -24,7 +24,8 @@ exports.authenticate  = (req, res) => {
   res.render('auth/url/authenticate', {
     clientId: req.query.clientId,
     client: req.client,
-    redirectUrl: req.query.redirect_uri
+    redirectUrl: req.query.redirect_uri,
+    loginTokenValidDuration: (env.process.LOGIN_TOKEN_VALID_DURATION_IN_TEXT ? env.process.LOGIN_TOKEN_VALID_DURATION_IN_TEXT : '60 minuten')
   });
 };
 
@@ -71,6 +72,7 @@ const sendEmail = (tokenUrl, user, client) => {
       firstName: user.firstName,
       clientUrl: client.mainUrl,
       clientName: client.name,
+      loginTokenValidDuration: (env.process.LOGIN_TOKEN_VALID_DURATION_IN_TEXT ? env.process.LOGIN_TOKEN_VALID_DURATION_IN_TEXT : '60 minuten')
     }
   });
 }
