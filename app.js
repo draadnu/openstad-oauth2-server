@@ -60,8 +60,6 @@ app.use(expressSession({
   resave            : true,
   secret            : config.session.secret,
   proxy             : true,
-  store             : new MemoryStore(),
-//  store             : new MemoryStore(),
   store             : new FileStore({
     ttl: 3600 * 24 * 31
   }),
