@@ -1,7 +1,7 @@
 {% extends 'emails/layout.html' %}
 
 {% block body %}
-<h2 style="margin-bottom: 4px; font-size: 25px;">Inloglink aangevraagd</h2>
+<h2 style="margin-bottom: 4px; font-size: 25px;">Inloggen op Statenkwartier Begroot</h2>
 
 {% if firstName %}
 <br />
@@ -12,23 +12,27 @@
 
 {% if process.env.CONTENT === 'statenkwartier' %}
 <p>
-    Op <a href="{{clientUrl}}" style="color:#227b3c" target="_blank"><span class="il">Statenkwartier</span> Begroot</a>
-
-    is een inloglink aangevraagd voor dit emailadres.
+    Op Statenkwartier Begroot is jouw e-mailadres gebruikt om een account aan te maken. Klik op de knop hieronder om automatisch in te loggen.
 </p>
+
+De knop is eenmalig bruikbaar en maximaal 48 uur geldig vanaf [datum en tijd].
+<br />
+<br />
 {% else %}
 
 Voor <a href="{{clientUrl}}" target="_blank">{{clientName}}</a>
 is een inloglink aangevraagd voor dit emailadres.
-
-{% endif %}
-
 
 Klik op de knop hieronder om automatisch in te loggen.
 <br />
 De knop is 60 minuten geldig.
 <br />
 <br />
+
+{% endif %}
+
+
+
 
 {% if process.env.CONTENT === 'statenkwartier' %}
 <p align="left" style="margin: 10px 0;">
