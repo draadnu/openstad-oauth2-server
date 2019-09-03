@@ -371,8 +371,8 @@
                                       <tr>
                                           <td align="left" class="headerContent" style="padding: 10px 50px;">
 
-                                              {% if process.env.CONTENT === 'statenkwartier' %}
-                                            <img src="{{emailAssetsUrl}}/logo.svg" width="170" height="26" id="headerImage campaign-icon" />
+                                              {% if process.env.EMAIL_LOGO_FILE %}
+                                            <img src="{{emailAssetsUrl}}/{{process.env.EMAIL_LOGO_FILE}}" width="170" height="26" id="headerImage campaign-icon" />
                                               {% else %}
                                               <img src="{{emailAssetsUrl}}/logo.png" width="170" height="26" id="headerImage campaign-icon" />
                                               {% endif %}
@@ -385,7 +385,7 @@
                               </td>
                           </tr>
                         <tr>
-                            {% if process.env.CONTENT !== 'statenkwartier' %}
+                            {% if !process.env.SHOW_MAIL_HEADER || process.env.SHOW_MAIL_HEADER !== 'no' %}
                             <tr>
                                 <td align="center" valign="top">
                                     <!-- // Begin Template Header \\ -->
