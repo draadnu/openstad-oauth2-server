@@ -17,7 +17,7 @@ exports.send = function ({subject, toName, toEmail, template, variables, fromEma
     emailAssetsUrl: process.env.EMAIL_ASSETS_URL,
     appUrl: process.env.APP_URL,
     emailLogoFile: process.env.EMAIL_LOGO_FILE,
-    showMailHeader: SHOW_MAIL_HEADER
+    showMailHeader: process.env.SHOW_MAIL_HEADER
   });
 
   /**
