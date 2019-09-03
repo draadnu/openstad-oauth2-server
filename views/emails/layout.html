@@ -385,7 +385,7 @@
                               </td>
                           </tr>
                         <tr>
-                            {% if !process.env.SHOW_MAIL_HEADER || process.env.SHOW_MAIL_HEADER !== 'no' %}
+                            {% if process.env.SHOW_MAIL_HEADER !== 'no' %}
                             <tr>
                                 <td align="center" valign="top">
                                     <!-- // Begin Template Header \\ -->
