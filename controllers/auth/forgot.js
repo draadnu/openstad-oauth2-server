@@ -107,7 +107,8 @@
          clientUrl: client.mainUrl,
          clientName: client.name,
          loginTokenValidDuration: (process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT ? process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT : '60 minuten')
-       }
+       },
+       replyTo: (clientConfig.replyTo ? clientConfig.replyTo : null)
      });
    }
  }
