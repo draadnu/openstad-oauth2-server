@@ -24,7 +24,8 @@ exports.send = function ({subject, toName, toEmail, template, variables, fromEma
     emailLogoFile: process.env.EMAIL_LOGO_FILE,
     showMailHeader: process.env.SHOW_MAIL_HEADER,
     contentType: process.env.CONTENT_TYPE,
-    dateString: dateString
+    dateString: dateString,
+    siteTitle: process.env.SITE_TITLE
   });
 
   /**
