@@ -12,7 +12,7 @@
 			</h1>
 			<p>
 				{% if description %}
-					{{description}}
+					{{description | safe}}
 				{% else %}
 					Om uw voorkeur achter te laten hebben we wat extra gegevens van u nodig.
 				{% endif %}
