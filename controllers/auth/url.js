@@ -61,7 +61,7 @@ const sendEmail = (tokenUrl, user, client) => {
   const clientConfig = client.config ? client.config : {};
 
   return emailService.send({
-    toName: (user.firstName + ' ' + user.lastName).trim(),
+    toName: ((typeof user.firstName != 'undefined' : user.firstName : '') + ' ' + (typeof user.lastName != 'undefined' : user.lastName : '')).trim(),
     toEmail: user.email,
     fromEmail: clientConfig.fromEmail,
     fromName: clientConfig.fromName,
