@@ -371,7 +371,7 @@
                                       <tr>
                                           <td align="left" class="headerContent" style="padding: 10px 50px;">
 
-                                              {% if process.env.EMAIL_LOGO_FILE %}
+                                              {% if emailLogoFile %}
                                             <img src="{{emailAssetsUrl}}/{{process.env.EMAIL_LOGO_FILE}}" width="170" height="26" id="headerImage campaign-icon" />
                                               {% else %}
                                               <img src="{{emailAssetsUrl}}/logo.png" width="170" height="26" id="headerImage campaign-icon" />
@@ -385,7 +385,7 @@
                               </td>
                           </tr>
                         <tr>
-                            {% if process.env.SHOW_MAIL_HEADER !== 'no' %}
+                            {% if showMailHeader !== 'no' %}
                             <tr>
                                 <td align="center" valign="top">
                                     <!-- // Begin Template Header \\ -->
