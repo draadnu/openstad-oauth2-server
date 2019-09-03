@@ -12,9 +12,7 @@ exports.send = function ({subject, toName, toEmail, template, variables, fromEma
 
   // Set current date in readable format
   var currDate = new Date();
-  var dateString = ('0' + currDate.getUTCDate()).slice(-2) + '/' + ('0' + (currDate.getUTCMonth() + 1)).slice(-2) + '/' + currDate.getUTCFullYear() + " " +
-   ("0" + m.getUTCHours()).slice(-2) + ":" +
-    ("0" + m.getUTCMinutes()).slice(-2);
+  var dateString = ('0' + currDate.getUTCDate()).slice(-2) + '/' + ('0' + (currDate.getUTCMonth() + 1)).slice(-2) + '/' + currDate.getUTCFullYear() + ' ' + ('0' + currDate.getUTCHours()).slice(-2) + ':' + ('0' + currDate.getUTCMinutes()).slice(-2);
   
   /**
    * Enrich variables with URLS in order to make absolute urls in E-mails
