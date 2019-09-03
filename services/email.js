@@ -10,6 +10,12 @@ const timestampFilter   = require('../nunjucks/timestamp');
 
 exports.send = function ({subject, toName, toEmail, template, variables, fromEmail, fromName, replyTo}) {
 
+  // Set current date in readable format
+  var currDate = new Date();
+  var dateString = ('0' + currDate.getUTCDate()).slice(-2) + '/' + ('0' + (currDate.getUTCMonth() + 1)).slice(-2) + '/' + currDate.getUTCFullYear() + " " +
+   ("0" + m.getUTCHours()).slice(-2) + ":" +
+    ("0" + m.getUTCMinutes()).slice(-2);
+  
   /**
    * Enrich variables with URLS in order to make absolute urls in E-mails
    */
@@ -18,7 +24,8 @@ exports.send = function ({subject, toName, toEmail, template, variables, fromEma
     appUrl: process.env.APP_URL,
     emailLogoFile: process.env.EMAIL_LOGO_FILE,
     showMailHeader: process.env.SHOW_MAIL_HEADER,
-    contentType: process.env.CONTENT_TYPE
+    contentType: process.env.CONTENT_TYPE,
+    dateString: dateString
   });
 
   /**
