@@ -27,7 +27,7 @@
 <div class="flash-container {% if flashRelative %} flash-container-relative {% endif %}">
   <div role="alert" class="flash-message flash-message--success">
     <p class="flash-message__content" aria-live="off" tabindex="-1">
-      {{ success.msg }}
+      {{ success.msg | safe}}
     </p>
     <div class="flash-message__close-button">
       <button aria-label="close message" class="close-button" name="button" type="button">x</button>
