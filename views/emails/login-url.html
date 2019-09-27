@@ -1,7 +1,7 @@
 {% extends 'emails/layout.html' %}
 
 {% block body %}
-<h2 style="margin-bottom: 4px; font-size: 25px;">Inloggen op Statenkwartier Begroot</h2>
+<h2 style="margin-bottom: 4px; font-size: 25px;">Inloggen op De Brinken Knapt Op</h2>
 
 {% if firstName %}
 <br />
@@ -10,9 +10,9 @@
 {% endif %}
 <br />
 
-{% if contentType === 'statenkwartier' %}
+{% if contentType === 'denhaagknaptop' %}
 <p>
-    Op Statenkwartier Begroot is jouw e-mailadres gebruikt om een account aan te maken. Klik op de knop hieronder om automatisch in te loggen.
+    Op De Brinken Knapt Op is jouw e-mailadres gebruikt om een account aan te maken. Klik op de knop hieronder om automatisch in te loggen.
 </p>
 
 De knop is eenmalig bruikbaar en maximaal 48 uur geldig vanaf {{dateString}}.
@@ -34,7 +34,7 @@ De knop is {{loginTokenValidDuration}} geldig.
 
 
 
-{% if contentType === 'statenkwartier' %}
+{% if contentType === 'denhaagknaptop' %}
 <p align="left" style="margin: 10px 0;">
     <a
             href="{{tokenUrl}}"
@@ -60,7 +60,7 @@ De knop is {{loginTokenValidDuration}} geldig.
 
 <br />
 
-{% if contentType === 'statenkwartier' %}
+{% if contentType === 'sdenhaagknaptop' %}
 <p style="font-size:0.7em;font-style:italic;margin-bottom:5em;text-align:left" align="left">
 {% else %}
 <p style="font-size:0.7em;font-style:italic;margin-bottom:5em" align="center">
@@ -69,7 +69,7 @@ De knop is {{loginTokenValidDuration}} geldig.
 
   Of gebruik deze link in je browser:
 	<br />
-      {% if contentType === 'statenkwartier' %}
+      {% if contentType === 'denhaagknaptop' %}
     <a
             href="{{tokenUrl}}"
             style="color:#227b3c"
@@ -86,9 +86,9 @@ De knop is {{loginTokenValidDuration}} geldig.
   </a>
 </p>
 
-{% if contentType === 'statenkwartier' %}
+{% if contentType === 'denhaagknaptop' %}
 <p style="font-size:0.7em;line-height:150%;padding-bottom:20px;text-align:left">
-    Geen account aangemaakt op <span class="il">Statenkwartier</span> Begroot? Dan heeft waarschijnlijk iemand anders per ongeluk jouw emailadres ingevuld. In dat geval kun je deze email negeren; er wordt niks mee gedaan.
+    Geen account aangemaakt op <span class="il">De Brinken</span> Knapt Op? Dan heeft waarschijnlijk iemand anders per ongeluk jouw emailadres ingevuld. In dat geval kun je deze email negeren; er wordt niks mee gedaan.
 </p>
     {% endif %}
 {% endblock %}
