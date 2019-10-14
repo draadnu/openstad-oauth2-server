@@ -20,6 +20,7 @@ exports.index = (req, res, next) => {
     requiredFields: requiredUserFields,
     info: configRequiredFields.info,
     description: configRequiredFields.description,
+    explanation: configRequiredFields.explanation,
     title: configRequiredFields.title,
     buttonText: configRequiredFields.buttonText,
     redirect_uri: req.query.redirect_uri

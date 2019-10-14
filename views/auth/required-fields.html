@@ -47,8 +47,9 @@
 
 				<p>
 					<br />
-						<!--Waarom willen we dit van u weten?
-						Omdat we graag zoveel mogelijk inzicht willen krijgen in waar de voorkeur van de Herengracht en omliggende straten ligt.-->
+						{% if explanation %}
+							{{ explanation | safe }}
+						{% endif %}
 				</p>
       </form>
 		</div>
