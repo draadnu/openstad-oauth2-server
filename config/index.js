@@ -43,7 +43,7 @@ exports.refreshToken = {
  *                            expired access tokens.
  */
 exports.db = {
-  timeToCheckExpiredTokens : 3600,
+  timeToCheckExpiredTokens : 600,
 };
 
 /**
