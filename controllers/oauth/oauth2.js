@@ -162,8 +162,8 @@ exports.authorization = [
   login.ensureLoggedIn(),
   server.authorization((clientID, redirectURI, scope, done) => {
 
-    //console.log('===> clientID', clientID);
-		//console.log('===> redirectURI', redirectURI);
+    console.log('===> o2auth controller clientID', clientID);
+		console.log('===> o2auth controller redirectURI', redirectURI);
 
     new Client({clientId: clientID})
     .fetch()

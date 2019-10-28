@@ -46,6 +46,8 @@ exports.withOne = (req, res, next) => {
 }
 
 exports.withRoleForClient = (req, res, next) => {
+  
+  console.log ('===> from user.withRoleForClient mw', req.user, req.client);
 
   new UserRole({ userId: req.user.id, clientId: req.client.id })
      .fetch()

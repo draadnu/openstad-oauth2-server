@@ -20,6 +20,7 @@ exports.validateLogin = (req, res, next) => {
 exports.check = (req, res, next) => {
 
   if (!req.isAuthenticated || !req.isAuthenticated()) {
+    console.log ('===> not authenticated from auth.check mw', req.client);
     let url = '/login?clientId=' + req.client.clientId;
 
     if (req.query.redirect_uri) {
