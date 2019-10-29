@@ -182,7 +182,7 @@ module.exports = function(app){
   app.post('/auth/required-fields', clientMw.withOne, authRequiredFields.post);
 
 
-  app.use('/dialog', [bruteForce.global.prevent]);
+  //app.use('/dialog', [bruteForce.global.prevent]);
 
   app.get('/dialog/authorize',            clientMw.withOne, authMw.check, userMw.withRoleForClient,  clientMw.checkRequiredUserFields,  clientMw.checkUniqueCodeAuth((req, res) => { console.log('===> checkUniqueCodeAuth callback', req.query, req.body); return res.redirect('/login?clientId=' + req.query.client_id);}),   oauth2Controller.authorization);
   app.post('/dialog/authorize/decision',  clientMw.withOne, clientMw.checkUniqueCodeAuth(),  bruteForce.global.prevent, oauth2Controller.decision);
