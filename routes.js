@@ -96,7 +96,8 @@ module.exports = function(app){
 	/**
 	 * Shared middleware for all auth routes, adding client and per
 	 */
-	app.use('/auth', [clientMw.withOne, bruteForce.global.prevent]);
+	//app.use('/auth', [clientMw.withOne, bruteForce.global.prevent]);
+	app.use('/auth', [clientMw.withOne]);
 
 	/**
 	 * Login & register with local login
