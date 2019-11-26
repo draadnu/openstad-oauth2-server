@@ -372,7 +372,11 @@
                                           <td align="left" class="headerContent" style="padding: 10px 30px;">
 
                                               {% if emailLogoFile %}
-                                              <img src="{{emailAssetsUrl}}/{{emailLogoFile}}" width="170" height="54" alt="{{siteTitle}}" id="headerImage campaign-icon" />
+                                                {% if emailLogoWidth and emailLogoHeight %}
+                                                    <img src="{{emailAssetsUrl}}/{{emailLogoFile}}" width="{{emailLogoWidth}}" height="{{emailLogoHeight}}" alt="{{siteTitle}}" id="headerImage campaign-icon" />
+                                                {% else %}
+                                                    <img src="{{emailAssetsUrl}}/{{emailLogoFile}}" width="170" height="54" alt="{{siteTitle}}" id="headerImage campaign-icon" />
+                                                {% endif %}
                                               {% else %}
                                               <img src="{{emailAssetsUrl}}/logo.png" width="170" height="26" alt="{{siteTitle}}" id="headerImage campaign-icon" />
                                               {% endif %}

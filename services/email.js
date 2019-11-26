@@ -22,6 +22,8 @@ exports.send = function ({subject, toName, toEmail, template, variables, fromEma
     emailAssetsUrl: process.env.EMAIL_ASSETS_URL,
     appUrl: process.env.APP_URL,
     emailLogoFile: process.env.EMAIL_LOGO_FILE,
+    emailLogoWidth: process.env.EMAIL_LOGO_WIDTH,
+    emailLogoHeight: process.env.EMAIL_LOGO_HEIGHT,
     showMailHeader: process.env.SHOW_MAIL_HEADER,
     contentType: process.env.CONTENT_TYPE,
     dateString: dateString,
