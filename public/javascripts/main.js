@@ -14,7 +14,7 @@ $(function() {
     var rege = /^[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}$/i;
 
      return rege.test(value);
- }, "Postcode niet correct");
+ }, "Een postcode bestaat uit 4 cijfers en 2 letters");
 
 function initFormsValidation () {
   $('.validate-form').each(function () {
@@ -28,9 +28,26 @@ function initFormsValidation () {
             equalTo : "#password"
         },
         postcode : {
-          postcodeNL: true
-        }
-      }
+          postcodeNL: true,
+        },
+        firstName: {
+          required: true,
+        },
+        lastName: {
+          required: true,
+        },
+      },
+      messages: {
+        firstName: {
+          required: 'Je voornaam is nog niet ingevuld',
+        },
+        lastName: {
+          required: 'Je achternaam is nog niet ingevuld',
+        },
+        postcode: {
+          required: 'Een postcode bestaat uit 4 cijfers en 2 letters',
+        },
+      },
     });
   });
 }
