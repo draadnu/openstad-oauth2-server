@@ -148,6 +148,8 @@ exports.checkUniqueCodeAuth = (errorCallback) => {
   return (req, res, next) => {
       const authTypes = req.client.authTypes;
 
+      console.log ('===> from within checkUniqueCodeauth', authTypes, authTypes.indexOf('UniqueCode') !== -1, req.client, req.user);
+      
       // if UniqueCode isset
       if (authTypes.indexOf('UniqueCode') !== -1) {
         new UniqueCode({ clientId: req.client.id, userId: req.user.id })

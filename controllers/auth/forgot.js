@@ -95,7 +95,7 @@
      const clientConfig = client.config ? client.config : {};
 
      return emailService.send({
-       toName: (user.firstName + ' ' + user.lastName).trim(),
+       toName: ((typeof user.firstName != 'undefined' ? user.firstName : '') + ' ' + (typeof user.lastName != 'undefined' ? user.lastName : '')).trim(),
        toEmail: user.email,
        fromEmail: clientConfig.fromEmail,
        fromName: clientConfig.fromName,
@@ -106,7 +106,9 @@
          firstName: user.firstName,
          clientUrl: client.mainUrl,
          clientName: client.name,
-       }
+         loginTokenValidDuration: (process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT ? process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT : '60 minuten')
+       },
+       replyTo: (clientConfig.replyTo ? clientConfig.replyTo : null)
      });
    }
  }

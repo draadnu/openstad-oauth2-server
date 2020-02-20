@@ -369,20 +369,14 @@
                                   <!-- // Begin Template Header \\ -->
                                 <table border="0" align="left" cellpadding="0" cellspacing="0" width="600" id="templateHeader">
                                       <tr>
-                                          <td align="left" class="headerContent" style="padding: 10px 50px;">
+                                          <td align="left" class="headerContent" style="padding: 10px 30px;">
 
-                                            <img
-                                              {% if logo %}
-                                              src="{{logo}}"
+                                              {% if emailLogoFile %}
+                                              <img src="{{emailAssetsUrl}}/{{emailLogoFile}}" width="170" height="54" alt="{{siteTitle}}" id="headerImage campaign-icon" />
                                               {% else %}
-                                              src="{{emailAssetsUrl}}/logo-small.png"
+                                              <img src="{{emailAssetsUrl}}/logo.png" width="170" height="26" alt="{{siteTitle}}" id="headerImage campaign-icon" />
                                               {% endif %}
-                                              width="99"
-                                              height="70"
-                                              id="headerImage campaign-icon"
-                                            />
-
-                                            <!-- // Begin Module: Standard Header Image \\ -->                                            <!-- // End Module: Standard Header Image \\ -->
+                                              <!-- // Begin Module: Standard Header Image \\ -->                                            <!-- // End Module: Standard Header Image \\ -->
 
                                           </td>
                                       </tr>
@@ -391,26 +385,23 @@
                               </td>
                           </tr>
                         <tr>
-                          <tr>
-                            	<td align="center" valign="top">
+                            {% if showMailHeader !== 'no' %}
+                            <tr>
+                                <td align="center" valign="top">
                                     <!-- // Begin Template Header \\ -->
-                                	<table border="0" cellpadding="0" cellspacing="0" width="600" id="templateHeader">
+                                    <table border="0" cellpadding="0" cellspacing="0" width="600" id="templateHeader">
                                         <tr>
                                             <td class="headerContent">
 
-                                            	<!-- // Begin Module: Standard Header Image \\ -->
-                                            	<img
-                                                {% if headerImage %}
-                                                src="{{headerImage}}"
-                                                {% else %}
-                                                src="{{emailAssetsUrl}}/mail-header.jpg"
-                                                {% endif %}
-                                                width="600"
-                                                height="193"
-                                                style="max-width:600px;"
-                                                id="headerImage campaign-icon"
-                                              />
-                                            	<!-- // End Module: Standard Header Image \\ -->
+                                                <!-- // Begin Module: Standard Header Image \\ -->
+                                                <img
+                                                        src="{{emailAssetsUrl}}/mail-header.jpg"
+                                                        width="600"
+                                                        height="193"
+                                                        style="max-width:600px;"
+                                                        id="headerImage campaign-icon"
+                                                />
+                                                <!-- // End Module: Standard Header Image \\ -->
 
                                             </td>
                                         </tr>
@@ -418,6 +409,8 @@
                                     <!-- // End Template Header \\ -->
                                 </td>
                             </tr>
+
+                            {% endif %}
                         	   <tr>
                             	<td align="center" valign="top">
                                     <!-- // Begin Template Body \\ -->
@@ -428,7 +421,7 @@
                                           <!-- // Begin Module: Standard Content \\ -->
                                           <table border="0" cellpadding="20" cellspacing="0" width="100%">
                                               <tr>
-                                                  <td valign="top" class="bodyContent" style="padding: 50px; font-family: Arial;font-size: 14px;line-height: 1.5;color: #000;">
+                                                  <td valign="top" class="bodyContent" style="padding: 30px; font-family: Arial;font-size: 14px;line-height: 1.5;color: #000;">
                                                     {% block body %}{% endblock %}
 											                             </td>
                                               </tr>

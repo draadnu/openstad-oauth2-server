@@ -54,7 +54,8 @@ exports.authenticate  = (req, res) => {
   res.render('auth/url/authenticate', {
     clientId: req.query.clientId,
     client: req.client,
-    redirectUrl: encodeURIComponent(req.query.redirect_uri)
+    redirectUrl: encodeURIComponent(req.query.redirect_uri),
+    loginTokenValidDuration: (process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT ? process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT : '60 minuten')
   });
 };
 
@@ -73,7 +74,7 @@ const handleSending = (req, res, next) => {
     .then(() => { return tokenUrl.format(req.client, req.user, req.redirectUrl); })
     .then((tokenUrl) => { return sendEmail(tokenUrl, req.user, req.client); })
     .then((result) => {
-      req.flash('success', {msg: 'De e-mail is verstuurd naar: ' + req.user.email});
+      req.flash('success', {msg: '<strong>E-mail verzonden</strong><br />We hebben een e-mail gestuurd naar ' + req.user.email + ' met een link waarmee je eenmalig kan inloggen. <br />De verstuurde link is 48 uur geldig.<br /><br />Houd er rekening mee dat de e-mail misschien in je spambox terecht komt!'});
       res.redirect(req.header('Referer') || '/login-with-email-url');
     })
     .catch((err) => {
@@ -96,7 +97,7 @@ const sendEmail = (tokenUrl, user, client) => {
 
 
   return emailService.send({
-    toName: (user.firstName + ' ' + user.lastName).trim(),
+    toName: ((typeof user.firstName != 'undefined' ? user.firstName : '') + ' ' + (typeof user.lastName != 'undefined' ? user.lastName : '')).trim(),
     toEmail: user.email,
     fromEmail: clientConfig.fromEmail,
     fromName: clientConfig.fromName,
@@ -109,8 +110,10 @@ const sendEmail = (tokenUrl, user, client) => {
       clientUrl: client.mainUrl,
       clientName: client.name,
       headerImage: emailHeaderImage,
-      logo: emailLogo
-    }
+      logo: emailLogo,
+      loginTokenValidDuration: (process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT ? process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT : '60 minuten')
+    },
+    replyTo: (clientConfig.replyTo ? clientConfig.replyTo : null)
   });
 }
 
