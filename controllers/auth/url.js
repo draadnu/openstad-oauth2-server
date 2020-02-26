@@ -74,7 +74,7 @@ const handleSending = (req, res, next) => {
     .then(() => { return tokenUrl.format(req.client, req.user, req.redirectUrl); })
     .then((tokenUrl) => { return sendEmail(tokenUrl, req.user, req.client); })
     .then((result) => {
-      req.flash('success', {msg: '<strong>E-mail verzonden</strong><br />We hebben een e-mail gestuurd naar ' + req.user.email + ' met een link waarmee je eenmalig kan inloggen. <br />De verstuurde link is 48 uur geldig.<br /><br />Houd er rekening mee dat de e-mail misschien in je spambox terecht komt!'});
+      req.flash('success', {msg: '<strong>E-mail verzonden</strong><br />We hebben een e-mail gestuurd naar ' + req.user.email + ' met een link waarmee je eenmalig kan inloggen. <br />De verstuurde link is 48 uur geldig.<br /><br />Houd er rekening mee dat de e-mail misschien in je ongewenste e-mail (spam) terecht komt!'});
       res.redirect(req.header('Referer') || '/login-with-email-url');
     })
     .catch((err) => {
