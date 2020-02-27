@@ -52,12 +52,26 @@ const PasswordResetToken  = bookshelf.Model.extend({
 
 const User = bookshelf.Model.extend({
   tableName: 'users',
+  hasTimestamps: ['createdAt', 'updatedAt'],
+  optins() {
+    return this.hasMany('UserOptin');
+  }
+});
+
+User.fetchByOptins = (optins) => {
+  return User.forge().query((query) => {
+    query.join('user_optins', 'user_optins.userId', 'users.id');
+    query.whereIn('user_optins.optin', optins);
+  });
+}
+
+const UserOptin = bookshelf.Model.extend({
+  tableName: 'user_optins',
   hasTimestamps: true,
   hasTimestamps: ['createdAt', 'updatedAt'],
-  /*roles: function(){
-    console.log(this);
-   return this.belongsToMany(Role).withPivot(['user_roles']);
- }*/
+  user() {
+    return this.belongsTo('User')
+  }
 });
 
 const ActionLog  = bookshelf.Model.extend({
@@ -72,5 +86,6 @@ exports.LoginToken = LoginToken;
 exports.UniqueCode = UniqueCode;
 exports.Role = Role;
 exports.UserRole = UserRole;
+exports.UserOptin = UserOptin;
 exports.PasswordResetToken = PasswordResetToken;
 exports.ActionLog = ActionLog;
