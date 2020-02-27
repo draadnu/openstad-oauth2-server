@@ -29,14 +29,6 @@ exports.withOne = (req, res, next) => {
     clientId = req.params.clientId;
   }
 
-
-  console.log('req.params', req.params);
-  console.log('req.body', req.body);
-  console.log('req.query', req.query);
-  var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-  console.log('=>>> fullUrl ---', fullUrl);
-  console.log('clientIdclientId', clientId);
-
   if (clientId) {
     new Client({ clientId: clientId })
     .fetch()
@@ -141,7 +133,7 @@ exports.checkIfEmailRequired =  (req, res, next) => {
       if (emailRequired && !req.user.email) {
         if (emailAuthTypesEnabled) {
           req.emailRequiredForAuth = true;
-          res.redirect(`/login?clientId=${req.client.clientId}&redirect_uri=${req.query.redirect_uri}`);
+          res.redirect(`/login?clientId=${req.client.clientId}&redirect_uri=${encodeURIComponent(req.query.redirect_uri)}`);
         } else {
           throw new Error('E-mail is required but no auth type enabled that is able to validate it properly');
         }
@@ -205,7 +197,7 @@ exports.checkRequiredUserFields = (req, res, next) => {
 
   // if error redirect to register
   if (error) {
-    res.redirect(`/auth/required-fields?clientId=${req.client.clientId}&redirect_uri=${req.query.redirect_uri}`);
+    res.redirect(`/auth/required-fields?clientId=${req.client.clientId}&redirect_uri=${encodeURIComponent(req.query.redirect_uri)}`);
   } else {
     next();
   }
@@ -252,7 +244,6 @@ exports.update = (req, res, next) => {
   req.clientModel
     .save()
     .then((client) => {
-      console.log('update success');
       next();
     })
     .catch((err) => {

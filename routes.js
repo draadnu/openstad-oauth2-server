@@ -11,12 +11,10 @@ const adminUserController      = require('./controllers/admin/user');
 const adminClientController    = require('./controllers/admin/client');
 const adminRoleController      = require('./controllers/admin/role');
 const adminCodeController      = require('./controllers/admin/code');
-
 const adminApiUserController          = require('./controllers/admin/api/user');
 const adminApiClientController        = require('./controllers/admin/api/client');
 const adminApiRoleController          = require('./controllers/admin/api/role');
 const adminApiUniqueCodeController    = require('./controllers/admin/api/uniqueCode');
-
 
 //AUTH CONTROLLERS
 const authChoose	 						 = require('./controllers/auth/choose');
@@ -43,25 +41,24 @@ const logMw                    = require('./middleware/log');
 
 const loginBruteForce = bruteForce.user.getMiddleware({
   key: function(req, res, next) {
-      // prevent too many attempts for the same username
+      // prevent too many attempts for the same email
       next(req.body.email);
   }
 });
 
 const uniqueCodeBruteForce = bruteForce.user.getMiddleware({
   key: function(req, res, next) {
-      // prevent too many attempts for the same username
+      // prevent too many attempts for the same unique_code
       next('unique_code');
   }
 });
 
 const emailUrlBruteForce = bruteForce.user.getMiddleware({
   key: function(req, res, next) {
-      // prevent too many attempts for the same username
+      // prevent too many attempts for the same email
       next(req.body.email);
   }
 });
-
 
 const csurf = require('csurf');
 
@@ -96,8 +93,7 @@ module.exports = function(app){
 	/**
 	 * Shared middleware for all auth routes, adding client and per
 	 */
-	//app.use('/auth', [clientMw.withOne, bruteForce.global.prevent]);
-	app.use('/auth', [clientMw.withOne]);
+	app.use('/auth', [clientMw.withOne, bruteForce.global.prevent]);
 
 	/**
 	 * Login & register with local login
@@ -130,8 +126,6 @@ module.exports = function(app){
 	app.post('/auth/url/login',         emailUrlBruteForce, authUrl.postLogin);
   app.get('/auth/url/authenticate',   authUrl.authenticate);
 	app.post('/auth/url/authenticate',   emailUrlBruteForce, authUrl.postAuthenticate);
-	//app.get('/auth/url/register',      authUrl.register);
-	//app.post('/auth/url/register',     authUrl.postRegister);
 
 	/**
 	 * Auth routes for DigiD
@@ -163,7 +157,6 @@ module.exports = function(app){
 	 * Register extra info;
 	 * In case client specifies required fields
 	 */
-//	app.get('/register/info')
 
 	/**
 	 * Logout (all types :))
@@ -179,22 +172,17 @@ module.exports = function(app){
   app.post('/password', clientMw.withOne, authMw.check, csrfProtection, addCsrfGlobal, userMw.validatePassword, userController.postAccount);
 
   app.use('/auth/required-fields', [authMw.check, clientMw.withOne]);
-  app.get('/auth/required-fields', clientMw.withOne, authRequiredFields.index);
+  app.get('/auth/required-fields',  clientMw.withOne, clientMw.checkIfEmailRequired, authRequiredFields.index);
   app.post('/auth/required-fields', clientMw.withOne, authRequiredFields.post);
 
 
-  //app.use('/dialog', [bruteForce.global.prevent]);
+  app.use('/dialog', [bruteForce.global.prevent]);
 
-  app.get('/dialog/authorize',            clientMw.withOne, authMw.check, userMw.withRoleForClient,  clientMw.checkRequiredUserFields,  clientMw.checkUniqueCodeAuth((req, res) => { console.log('===> checkUniqueCodeAuth callback', req.query, req.body); return res.redirect('/login?clientId=' + req.query.client_id);}),   oauth2Controller.authorization);
-  //app.post('/dialog/authorize/decision',  clientMw.withOne, clientMw.checkUniqueCodeAuth(),  bruteForce.global.prevent, oauth2Controller.decision);
-  app.post('/dialog/authorize/decision',  clientMw.withOne, clientMw.checkUniqueCodeAuth(), oauth2Controller.decision);
+  app.get('/dialog/authorize',            clientMw.withOne, authMw.check, userMw.withRoleForClient,  clientMw.checkRequiredUserFields,  clientMw.checkUniqueCodeAuth((req, res) => { return res.redirect('/login?clientId=' + req.query.client_id);}),   oauth2Controller.authorization);
+  app.post('/dialog/authorize/decision',  clientMw.withOne, clientMw.checkUniqueCodeAuth(),  bruteForce.global.prevent, oauth2Controller.decision);
   app.post('/oauth/token',                oauth2Controller.token);
   app.get('/oauth/token',                 oauth2Controller.token);
-//   clientMw.withOne,
-//clientMw.withOne, bruteForce.global.prevent,
 
-
-//
   app.get('/api/userinfo', passport.authenticate('bearer', { session: false }), clientMw.withOne, clientMw.checkUniqueCodeAuth(),   userMw.withRoleForClient, userController.info);
   //app.get('/api/clientinfo', client.info);
 
@@ -206,50 +194,7 @@ module.exports = function(app){
   // https://developers.google.com/identity/protocols/OAuth2WebServer
   app.get('/api/revoke', tokenController.revoke);
 
-  /**
-   * Admin user routes
-   */
-
-  //shared middlware for all admin routes
-  app.use('/admin', [adminMiddleware.addClient, authMw.check, userMw.withRoleForClient, adminMiddleware.ensure]);
-
-  app.get('/admin/users',         userMw.withAll, adminUserController.all);
-  app.get('/admin/user/:userId',  clientMw.withAll, roleMw.withAll, userMw.withOne, adminUserController.edit);
-  app.get('/admin/user',          clientMw.withAll, roleMw.withAll, adminUserController.new);
-  app.post('/admin/user',         adminUserController.create);
-  app.post('/admin/user/:userId', userMw.withOne, adminUserController.update);
-
-
   require('./routes/adminApi')(app);
-
-
-  /**
-   * Admin client routes
-   */
-  app.get('/admin/clients',           clientMw.withAll, adminClientController.all);
-  app.get('/admin/client/:clientId',  clientMw.withOneById, adminClientController.edit);
-  app.get('/admin/client',            adminClientController.new);
-  app.post('/admin/client',           adminClientController.create);
-  app.post('/admin/client/:clientId', clientMw.withOneById, adminClientController.update);
-
-  /**
-   * Admin role routes
-   */
-  app.get('/admin/roles',           roleMw.withAll, adminRoleController.all);
-  app.get('/admin/role/:roleId',    roleMw.withOne, adminRoleController.edit);
-  app.get('/admin/role',            adminRoleController.new);
-  app.post('/admin/role',           adminRoleController.create);
-  app.post('/admin/role/:roleId',   roleMw.withOne, adminRoleController.update);
-
-  /**
-   * Admin code routes
-   */
-  app.get('/admin/codes',                   codeMw.withAll, adminCodeController.all);
-  app.get('/admin/code',                    clientMw.withAll, adminCodeController.new);
-  app.get('/admin/code/bulk',               clientMw.withAll, adminCodeController.bulk);
-  app.post('/admin/code/bulk',              upload.single('file'),  adminCodeController.postBulk);
-  app.post('/admin/code',                   adminCodeController.create);
-  app.post('/admin/code/destroy/:codeId',   adminCodeController.destroy);
 
   /**
    * Error routes

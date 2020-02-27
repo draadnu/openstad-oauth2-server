@@ -79,3 +79,5 @@ images
 .serverless
 
 .idea
+# certs
+certs/
