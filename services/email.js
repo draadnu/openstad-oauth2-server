@@ -12,8 +12,34 @@ exports.send = function ({subject, toName, toEmail, templateString, template, va
 
   // Set current date in readable format
   var currDate = new Date();
-  currDate.setHours(currDate.getHours() + 1);
-  var dateString = ('0' + currDate.getUTCDate()).slice(-2) + '/' + ('0' + (currDate.getUTCMonth() + 1)).slice(-2) + '/' + currDate.getUTCFullYear() + ' ' + ('0' + currDate.getUTCHours()).slice(-2) + ':' + ('0' + currDate.getUTCMinutes()).slice(-2);
+  currDate.setHours(currDate.getHours() + 49);
+  
+  var days = [
+    'zondag',
+    'maandag',
+    'dinsdag',
+    'woensdag',
+    'donderdag',
+    'vrijdag',
+    'zaterdag'
+  ];
+  
+  var months = [
+    'januari',
+    'februari',
+    'maart',
+    'april',
+    'mei',
+    'juni',
+    'juli',
+    'augustus',
+    'september',
+    'oktober',
+    'november',
+    'december',
+  ];
+  
+  var dateString = days[currDate.getUTCDay()] + ' ' + currDate.getUTCDate() + ' ' + months[currDate.getUTCMonth()] + ' ' + ('0' + currDate.getUTCHours()).slice(-2) + '.' + ('0' + currDate.getUTCMinutes()).slice(-2) + ' uur';
   
   /**
    * Enrich variables with URLS in order to make absolute urls in E-mails
