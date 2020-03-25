@@ -91,7 +91,7 @@ const sendEmail = (tokenUrl, user, client) => {
   const clientConfig = client.config ? client.config : {};
   const authTypeConfig = clientConfig.authTypes && clientConfig.authTypes.Url  ? clientConfig.authTypes.Url  : {};
   const emailTemplateString = authTypeConfig.emailTemplate ? authTypeConfig.emailTemplate : false;
-  const emailSubject = authTypeConfig.emailSubject ? authTypeConfig.emailSubject : 'Inloggen bij ' + client.name;
+  const emailSubject = authTypeConfig.emailSubject ? authTypeConfig.emailSubject : 'Inloggen op ' + client.name;
   const emailHeaderImage = authTypeConfig.emailHeaderImage ? authTypeConfig.emailHeaderImage : false;
   const emailLogo = authTypeConfig.emailLogo ? authTypeConfig.emailLogo : false;
 
