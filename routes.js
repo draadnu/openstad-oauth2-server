@@ -94,7 +94,8 @@ module.exports = function(app){
 	/**
 	 * Shared middleware for all auth routes, adding client and per
 	 */
-	app.use('/auth', [clientMw.withOne, bruteForce.global.prevent]);
+	//app.use('/auth', [clientMw.withOne, bruteForce.global.prevent]);
+	app.use('/auth', [clientMw.withOne]);
 
 	/**
 	 * Login & register with local login
@@ -104,7 +105,8 @@ module.exports = function(app){
 
 	//routes
 	app.get('/auth/local/login',     authLocal.login);
-	app.post('/auth/local/login',    loginBruteForce, authMw.validateLogin, authLocal.postLogin);
+	//app.post('/auth/local/login',    loginBruteForce, authMw.validateLogin, authLocal.postLogin);
+	app.post('/auth/local/login',    authMw.validateLogin, authLocal.postLogin);
 	app.get('/auth/local/register',  authLocal.register);
 	app.post('/auth/local/register', userMw.validateUser, userMw.validateUniqueEmail, authLocal.postRegister);
 
@@ -124,9 +126,11 @@ module.exports = function(app){
 
 	// routes
 	app.get('/auth/url/login',          authUrl.login);
-	app.post('/auth/url/login',         emailUrlBruteForce, authUrl.postLogin);
+	//app.post('/auth/url/login',         emailUrlBruteForce, authUrl.postLogin);
+	app.post('/auth/url/login',         authUrl.postLogin);
   app.get('/auth/url/authenticate',   authUrl.authenticate);
-	app.post('/auth/url/authenticate',   emailUrlBruteForce, authUrl.postAuthenticate);
+	//app.post('/auth/url/authenticate',   emailUrlBruteForce, authUrl.postAuthenticate);
+	app.post('/auth/url/authenticate',   authUrl.postAuthenticate);
 
 	/**
 	 * Auth routes for DigiD
@@ -152,7 +156,8 @@ module.exports = function(app){
 	 */
 	app.use('/auth/code', [clientMw.withOne, clientMw.setAuthType('UniqueCode'), clientMw.validate, csrfProtection, addCsrfGlobal]);
 	app.get('/auth/code/login',  authCode.login);
-	app.post('/auth/code/login', uniqueCodeBruteForce, logMw.logPostUniqueCode, authCode.postLogin);
+	//app.post('/auth/code/login', uniqueCodeBruteForce, logMw.logPostUniqueCode, authCode.postLogin);
+	app.post('/auth/code/login', logMw.logPostUniqueCode, authCode.postLogin);
 
 	/**
 	 * Register extra info;
@@ -177,10 +182,11 @@ module.exports = function(app){
   app.post('/auth/required-fields', clientMw.withOne, authRequiredFields.post);
 
 
-  app.use('/dialog', [bruteForce.global.prevent]);
+  //app.use('/dialog', [bruteForce.global.prevent]);
 
   app.get('/dialog/authorize',            clientMw.withOne, authMw.check, userMw.withRoleForClient,  clientMw.checkRequiredUserFields,  clientMw.checkUniqueCodeAuth((req, res) => { return res.redirect('/login?clientId=' + req.query.client_id);}),   oauth2Controller.authorization);
-  app.post('/dialog/authorize/decision',  clientMw.withOne, clientMw.checkUniqueCodeAuth(),  bruteForce.global.prevent, oauth2Controller.decision);
+  //app.post('/dialog/authorize/decision',  clientMw.withOne, clientMw.checkUniqueCodeAuth(),  bruteForce.global.prevent, oauth2Controller.decision);
+  app.post('/dialog/authorize/decision',  clientMw.withOne, clientMw.checkUniqueCodeAuth(),  oauth2Controller.decision);
   app.post('/oauth/token',                oauth2Controller.token);
   app.get('/oauth/token',                 oauth2Controller.token);
 
