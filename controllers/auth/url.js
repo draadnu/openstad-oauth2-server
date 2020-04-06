@@ -210,13 +210,15 @@ exports.postAuthenticate =  (req, res, next) => {
           const authorizeUrl = `/dialog/authorize?redirect_uri=${redirectUrl}&response_type=code&client_id=${req.client.clientId}&scope=offline`;
           return res.redirect(authorizeUrl);
         }
+        
+        redirectToAuthorisation();
 
-        req.brute.reset(() => {
+        /*req.brute.reset(() => {
             //log the succesfull login
             logSuccessFullLogin(req)
               .then (() => { redirectToAuthorisation(); })
               .catch (() => { redirectToAuthorisation(); });
-        });
+        });*/
       })
       .catch((err) => {
         next(err);
