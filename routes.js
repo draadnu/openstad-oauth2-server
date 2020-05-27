@@ -107,7 +107,7 @@ module.exports = function(app){
 
 	//routes
 	app.get('/auth/local/login',     authLocal.login);
-	app.post('/auth/local/login',    loginBruteForce, authMw.validateLogin, authLocal.postLogin);
+	app.post('/auth/local/login',    authMw.validateLogin, authLocal.postLogin);
 	app.get('/auth/local/register',  authLocal.register);
 	app.post('/auth/local/register', userMw.validateUser, userMw.validateUniqueEmail, authLocal.postRegister);
 
@@ -127,9 +127,9 @@ module.exports = function(app){
 
 	// routes
 	app.get('/auth/url/login',          authUrl.login);
-	app.post('/auth/url/login',         emailUrlBruteForce, authUrl.postLogin);
+	app.post('/auth/url/login',         authUrl.postLogin);
   app.get('/auth/url/authenticate',   authUrl.authenticate);
-	app.post('/auth/url/authenticate',   emailUrlBruteForce, authUrl.postAuthenticate);
+	app.post('/auth/url/authenticate',   authUrl.postAuthenticate);
 	//app.get('/auth/url/register',      authUrl.register);
 	//app.post('/auth/url/register',     authUrl.postRegister);
 
@@ -157,7 +157,7 @@ module.exports = function(app){
 	 */
 	app.use('/auth/code', [clientMw.withOne, clientMw.setAuthType('UniqueCode'), clientMw.validate, csrfProtection, addCsrfGlobal]);
 	app.get('/auth/code/login',  authCode.login);
-	app.post('/auth/code/login', uniqueCodeBruteForce, logMw.logPostUniqueCode, authCode.postLogin);
+	app.post('/auth/code/login', logMw.logPostUniqueCode, authCode.postLogin);
 
 	/**
 	 * Register extra info;
