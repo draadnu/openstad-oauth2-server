@@ -43,12 +43,12 @@ exports.postLogin = (req, res, next) => {
       if (err) { return next(err); }
 
       const redirectToAuthorize = () => {
-        req.brute.reset(() => {
-          const redirectUrl = req.query.redirect_uri ? req.query.redirect_uri : req.client.redirectUrl;
-          // Redirect if it succeeds to authorize screen
-          const authorizeUrl = `/dialog/authorize?redirect_uri=${redirectUrl}&response_type=code&client_id=${req.client.clientId}&scope=offline`;
-          return res.redirect(authorizeUrl);
-        });
+        //req.brute.reset(() => {
+        const redirectUrl = req.query.redirect_uri ? req.query.redirect_uri : req.client.redirectUrl;
+        // Redirect if it succeeds to authorize screen
+        const authorizeUrl = `/dialog/authorize?redirect_uri=${redirectUrl}&response_type=code&client_id=${req.client.clientId}&scope=offline`;
+        return res.redirect(authorizeUrl);
+        //});
       }
 
       if (req.client.config.defaultRoleId) {
