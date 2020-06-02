@@ -84,6 +84,25 @@ module.exports = function(app){
   });
 
   app.get('/', authLocal.index);
+  
+  
+app.get('/test', function(req, res){
+  var ip = req.ip; // trust proxy sets ip to the remote client (not to the ip of the last reverse proxy server)
+  if (ip.substr(0,7) == '::ffff:') { // fix for if you have both ipv4 and ipv6
+    ip = ip.substr(7);
+  }
+  // req.ip and req.protocol are now set to ip and protocol of the client, not the ip and protocol of the reverse proxy server
+  // req.headers['x-forwarded-for'] is not changed
+  // req.headers['x-forwarded-for'] contains more than 1 forwarder when
+  // there are more forwarders between the client and nodejs.
+  // Forwarders can also be spoofed by the client, but
+  // app.set('trust proxy') selects the correct client ip from the list
+  // if the nodejs server is called directly, bypassing the trusted proxies,
+  // then 'trust proxy' ignores x-forwarded-for headers and
+  // sets req.ip to the remote client ip address
+  
+  res.json({"ip": ip, "protocol": req.protocol, "headers": req.headers['x-forwarded-for']});
+});
 
 
 	/**
@@ -96,8 +115,7 @@ module.exports = function(app){
 	/**
 	 * Shared middleware for all auth routes, adding client and per
 	 */
-	//app.use('/auth', [clientMw.withOne, bruteForce.global.prevent]);
-	app.use('/auth', [clientMw.withOne]);
+	app.use('/auth', [clientMw.withOne, bruteForce.global.prevent]);
 
 	/**
 	 * Login & register with local login
@@ -183,11 +201,10 @@ module.exports = function(app){
   app.post('/auth/required-fields', clientMw.withOne, authRequiredFields.post);
 
 
-  //app.use('/dialog', [bruteForce.global.prevent]);
+  app.use('/dialog', [bruteForce.global.prevent]);
 
   app.get('/dialog/authorize',            clientMw.withOne, authMw.check, userMw.withRoleForClient,  clientMw.checkRequiredUserFields,  clientMw.checkUniqueCodeAuth((req, res) => { console.log('===> checkUniqueCodeAuth callback', req.query, req.body); return res.redirect('/login?clientId=' + req.query.client_id);}),   oauth2Controller.authorization);
-  //app.post('/dialog/authorize/decision',  clientMw.withOne, clientMw.checkUniqueCodeAuth(),  bruteForce.global.prevent, oauth2Controller.decision);
-  app.post('/dialog/authorize/decision',  clientMw.withOne, clientMw.checkUniqueCodeAuth(), oauth2Controller.decision);
+  app.post('/dialog/authorize/decision',  clientMw.withOne, clientMw.checkUniqueCodeAuth(),  bruteForce.global.prevent, oauth2Controller.decision);
   app.post('/oauth/token',                oauth2Controller.token);
   app.get('/oauth/token',                 oauth2Controller.token);
 //   clientMw.withOne,
