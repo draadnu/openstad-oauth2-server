@@ -41,7 +41,10 @@ EMAIL_ASSETS_URL=
 # Set the from name and email from which emails will be send (for example: password forgot & login url)
 FROM_NAME=
 FROM_EMAIL=
-```
+
+# Brute force: set trusted proxy for brute force middleware (e.g. 127.0.0.1 or ip address from server)
+TRUSTED_PROXY=
+``` 
 
 #### 2. Run NPM install
 
