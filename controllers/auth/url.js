@@ -181,13 +181,13 @@ exports.postAuthenticate =  (req, res, next) => {
 
      return tokenUrl.invalidateTokensForUser(user.id)
       .then((response) => {
-        req.brute.reset(() => {
+        //req.brute.reset(() => {
             // Redirect if it succeeds to authorize screen
             //check if allowed url will be done by authorize screen
             const authorizeUrl = `/dialog/authorize?redirect_uri=${redirectUrl}&response_type=code&client_id=${req.client.clientId}&scope=offline`;
 
             return res.redirect(authorizeUrl);
-          });
+          //});
       })
       .catch((err) => {
         next(err);
