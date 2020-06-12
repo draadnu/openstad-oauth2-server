@@ -3,7 +3,7 @@ const UniqueCode = require('../models').UniqueCode;
 const hat = require('hat');
 const userFields = require('../config/user').fields;
 const authTypes = require('../config/auth').types;
-
+const privilegedRoles =  require('../config/roles').privilegedRoles;
 const authTypesConfig = require('../config').authTypes;
 
 exports.withAll = (req, res, next) => {
@@ -20,7 +20,6 @@ exports.withAll = (req, res, next) => {
 exports.withOne = (req, res, next) => {
   let clientId = req.body && req.body.clientId ? req.body.clientId : req.query.clientId;
 
-
   if (!clientId) {
     clientId = req.query.client_id;
   }
@@ -28,14 +27,6 @@ exports.withOne = (req, res, next) => {
   if (!clientId) {
     clientId = req.params.clientId;
   }
-
-
-  console.log('req.params', req.params);
-  console.log('req.body', req.body);
-  console.log('req.query', req.query);
-  var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-  console.log('=>>> fullUrl ---', fullUrl);
-  console.log('clientIdclientId', clientId);
 
   if (clientId) {
     new Client({ clientId: clientId })
@@ -141,7 +132,7 @@ exports.checkIfEmailRequired =  (req, res, next) => {
       if (emailRequired && !req.user.email) {
         if (emailAuthTypesEnabled) {
           req.emailRequiredForAuth = true;
-          res.redirect(`/login?clientId=${req.client.clientId}&redirect_uri=${req.query.redirect_uri}`);
+          res.redirect(`/login?clientId=${req.client.clientId}&redirect_uri=${encodeURIComponent(req.query.redirect_uri)}`);
         } else {
           throw new Error('E-mail is required but no auth type enabled that is able to validate it properly');
         }
@@ -156,20 +147,25 @@ exports.checkUniqueCodeAuth = (errorCallback) => {
   return (req, res, next) => {
       const authTypes = req.client.authTypes;
 
-      console.log ('===> from within checkUniqueCodeauth', authTypes, authTypes.indexOf('UniqueCode') !== -1, req.client, req.user);
-      
-      // if UniqueCode isset
+      // if UniqueCode authentication is used, other methods are blocked to enforce users can never authorize with email
       if (authTypes.indexOf('UniqueCode') !== -1) {
+        console.log();
+
         new UniqueCode({ clientId: req.client.id, userId: req.user.id })
         .fetch()
         .then((codeResponse) => {
-          if (!!codeResponse) {
+          const userHasPrivilegedRole = privilegedRoles.indexOf(req.user.role) > -1;
+          
+          // if uniquecode exists or user has priviliged role
+          if (codeResponse || userHasPrivilegedRole) {
             next();
           } else {
             throw new Error('Not validated with Unique Code');
           }
         })
         .catch((error) => {
+          console.log('error',error);
+
           if (errorCallback) {
             try {
               errorCallback(req, res, next);
@@ -205,7 +201,7 @@ exports.checkRequiredUserFields = (req, res, next) => {
 
   // if error redirect to register
   if (error) {
-    res.redirect(`/auth/required-fields?clientId=${req.client.clientId}&redirect_uri=${req.query.redirect_uri}`);
+    res.redirect(`/auth/required-fields?clientId=${req.client.clientId}&redirect_uri=${encodeURIComponent(req.query.redirect_uri)}`);
   } else {
     next();
   }
@@ -252,7 +248,6 @@ exports.update = (req, res, next) => {
   req.clientModel
     .save()
     .then((client) => {
-      console.log('update success');
       next();
     })
     .catch((err) => {

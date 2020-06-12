@@ -2,21 +2,51 @@
  * Controller responsible for handling the logic for Url login
  * (login in with a link, for now send by e-mail)
  */
+ const authType = 'Url';
+
 const passport          = require('passport');
-const bcrypt            = require('bcrypt');
-const saltRounds        = 10;
-const hat               = require('hat');
-const login             = require('connect-ensure-login');
 const User              = require('../../models').User;
 const tokenUrl          = require('../../services/tokenUrl');
-const emailService      = require('../../services/email');
+const authService          = require('../../services/authService');
+const verificationService      = require('../../services/verificationService');
 const authUrlConfig     = require('../../config/auth').get('Url');
 
-exports.login  = (req, res) => {
+
+const setNoCachHeadersMw = (req, res, next) => {
+  res.setHeader('Surrogate-Control', 'no-store');
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+}
+
+// set no cache headers, so on return with back button no csrf issues
+exports.login  = [setNoCachHeadersMw, (req, res) => {
+  const config = req.client.config ? req.client.config : {};
+  const configAuthType = config.authTypes && config.authTypes[authType] ? config.authTypes[authType] : {};
+
   res.render('auth/url/login', {
     clientId: req.query.clientId,
     client: req.client,
-    redirectUrl: req.query.redirect_uri,
+    redirectUrl: encodeURIComponent(req.query.redirect_uri),
+    title: configAuthType && configAuthType.title ? configAuthType.title : false,
+    description: configAuthType && configAuthType.description ?  configAuthType.description : false,
+    label: configAuthType && configAuthType.label ?  configAuthType.label : false,
+    helpText: configAuthType && configAuthType.helpText ? configAuthType.helpText : false,
+    buttonText: configAuthType && configAuthType.buttonText ? configAuthType.buttonText : false,
+  });
+}];
+
+exports.confirmation  = (req, res) => {
+  const config = req.client.config ? req.client.config : {};
+  const configAuthType = config.authTypes && config.authTypes[authType] ? config.authTypes[authType] : {};
+
+  res.render('auth/url/confirmation', {
+    clientId: req.query.clientId,
+    client: req.client,
+    redirectUrl: encodeURIComponent(req.query.redirect_uri),
+    title: configAuthType && configAuthType.confirmedTitle ? configAuthType.confirmedTitle : false,
+    description: configAuthType && configAuthType.confirmedDescription ?  configAuthType.confirmedDescription : false,
   });
 };
 
@@ -24,8 +54,8 @@ exports.authenticate  = (req, res) => {
   res.render('auth/url/authenticate', {
     clientId: req.query.clientId,
     client: req.client,
-    redirectUrl: req.query.redirect_uri,
     loginTokenValidDuration: (process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT ? process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT : '60 minuten')
+    redirectUrl: encodeURIComponent(req.query.redirect_uri)
   });
 };
 
@@ -38,103 +68,70 @@ exports.register = (req, res, next) => {
   });
 }
 
+const handleSending = async (req, res, next) => {
+  try {
+    await verificationService.sendVerification(req.user, req.client, req.redirectUrl);
 
-const handleSending = (req, res, next) => {
-  tokenUrl.invalidateTokensForUser(req.user.id)
-    .then(() => { return tokenUrl.format(req.client, req.user, req.redirectUrl); })
-    .then((tokenUrl) => { return sendEmail(tokenUrl, req.user, req.client); })
-    .then((result) => {
-      req.flash('success', {msg: '<strong>E-mail verzonden</strong><br />We hebben een e-mail gestuurd naar ' + req.user.email + ' met een link waarmee je eenmalig kan inloggen. <br />De verstuurde link is 48 uur geldig.<br /><br />Houd er rekening mee dat de e-mail misschien in je spambox terecht komt!'});
-      res.redirect(req.header('Referer') || '/login-with-email-url');
-    })
-    .catch((err) => {
-      console.log('e0mail error', err);
-      req.flash('error', {msg: 'Het is niet gelukt om de e-mail te versturen!'});
-      res.redirect(req.header('Referer') || '/login-with-email-url');
-    });
+    req.flash('success', {msg: '<strong>E-mail verzonden</strong><br />We hebben een e-mail gestuurd naar ' + req.user.email + ' met een link waarmee je eenmalig kan inloggen. <br />De verstuurde link is 48 uur geldig.<br /><br />Houd er rekening mee dat de e-mail misschien in je spambox terecht komt!'});
+    res.redirect('/auth/url/confirmation?clientId=' +  req.client.clientId || '/login?clientId=' +  req.client.clientId );
+  } catch(err) {
+    console.log('e0mail error', err);
+    req.flash('error', {msg: 'Het is niet gelukt om de e-mail te versturen!'});
+    res.redirect(req.header('Referer') || '/login?clientId=' +  req.client.clientId);
+  }
 }
 
-/**
- * Send email
- */
-const sendEmail = (tokenUrl, user, client) => {
-  const clientConfig = client.config ? client.config : {};
-
-  return emailService.send({
-    toName: ((typeof user.firstName != 'undefined' ? user.firstName : '') + ' ' + (typeof user.lastName != 'undefined' ? user.lastName : '')).trim(),
-    toEmail: user.email,
-    fromEmail: clientConfig.fromEmail,
-    fromName: clientConfig.fromName,
-    subject: 'Inloggen op ' + client.name,
-    template: 'emails/login-url.html',
-    variables: {
-      tokenUrl: tokenUrl,
-      firstName: user.firstName,
-      clientUrl: client.mainUrl,
-      clientName: client.name,
-      loginTokenValidDuration: (process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT ? process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT : '60 minuten')
-    },
-    replyTo: (clientConfig.replyTo ? clientConfig.replyTo : null)
-  });
+//Todo: move these methods to the user service
+const createUser = async (email) => {
+  return new User({ email: email }).save();
 }
 
+const updateUser = async (user, email) => {
+  return user
+    .set('email', email)
+    .save();
+}
 
-exports.postLogin = (req, res, next) => {
-  const clientConfig = req.client.config ? req.client.config : {};
-  const redirectUrl =  clientConfig && clientConfig.emailRedirectUrl ? clientConfig.emailRedirectUrl : req.query.redirect_uri;
-  req.redirectUrl = redirectUrl;
+const getUser = async (email) => {
+  return new User({ email }).fetch();
+}
 
+exports.postLogin = async (req, res, next) => {
+  try {
+    const clientConfig = req.client.config ? req.client.config : {};
+    req.redirectUrl = clientConfig && clientConfig.emailRedirectUrl ? clientConfig.emailRedirectUrl : encodeURIComponent(req.query.redirect_uri);
 
-  /**
-   * Check if user exists
-   */
-  new User({ email: req.body.email })
-    .fetch()
-    .then((user) => {
-       if (user) {
-         req.user = user.serialize();
-         handleSending(req, res, next);
-       } else {
-         /**
-          * If active user is already set, the user is already logged in
-          * If email is not set it means they as anonymous user
-          * Add the submitted email to anonymous user
-          * If already a user with that email, ignore the anonymous user and login via existing user
-          */
-         if (req.user && !req.user.email && !user) {
-           req.user
-            .set('email', req.body.email)
-            .save()
-            .then((user) => {
-              req.user = user.serialize();
-              handleSending(req, res, next);
-            })
-            .catch((err) => { next(err); })
+    let user = await getUser(req.body.email);
 
-         } else {
-           new User({ email: req.body.email })
-             .save()
-             .then((user) => {
-               req.user = user.serialize();
-               handleSending(req, res, next);
-             })
-             .catch((err) => { next(err) });
-         }
-       }
-    })
-    .catch((err) => {
-      console.log('===> err', err);
-      req.flash('error', {msg: 'Het is niet gelukt om de e-mail te versturen!'});
-      res.redirect(req.header('Referer') || authUrlConfig.loginUrl);
-    });
+    if (user) {
+      req.user = user.serialize();
+      return handleSending(req, res, next);
+    }
 
     /**
      * Format the URL and the Send it to the user
+     * If active user is already set, the user is already logged in
+     * If email is not set it means they as anonymous user
+     * Add the submitted email to anonymous user
+     * If already a user with that email, ignore the anonymous user and login via existing user
      */
+    if (req.user && !req.user.email) {
+      user = await updateUser(req.user, req.body.email);
 
+      req.user = user.serialize();
+      return handleSending(req, res, next);
+    }
 
+    user = await createUser(req.body.email);
 
-}
+    req.user = user.serialize();
+    return handleSending(req, res, next);
+  } catch (err) {
+    console.log('===> err', err);
+    req.flash('error', { msg: 'Het is niet gelukt om de e-mail te versturen!' });
+    res.redirect(req.header('Referer') || authUrlConfig.loginUrl);
+  }
+};
 
 
 exports.postRegister = (req, res, next) => {
@@ -161,11 +158,10 @@ exports.postRegister = (req, res, next) => {
 
 };
 
-
 exports.postAuthenticate =  (req, res, next) => {
  passport.authenticate('url', { session: true }, function(err, user, info) {
    if (err) { return next(err); }
-   const redirectUrl = req.query.redirect_uri ? req.query.redirect_uri : req.client.redirectUrl;
+   const redirectUrl = req.query.redirect_uri ? encodeURIComponent(req.query.redirect_uri) : req.client.redirectUrl;
 
 
    // Redirect if it fails to the original e-mail screen
@@ -177,17 +173,21 @@ exports.postAuthenticate =  (req, res, next) => {
    req.logIn(user, function(err) {
      if (err) { return next(err); }
 
-     console.log('useruseruser', user);
-
      return tokenUrl.invalidateTokensForUser(user.id)
       .then((response) => {
-        //req.brute.reset(() => {
-            // Redirect if it succeeds to authorize screen
-            //check if allowed url will be done by authorize screen
-            const authorizeUrl = `/dialog/authorize?redirect_uri=${redirectUrl}&response_type=code&client_id=${req.client.clientId}&scope=offline`;
+        const redirectToAuthorisation = () => {
+          // Redirect if it succeeds to authorize screen
+          //check if allowed url will be done by authorize screen
+          const authorizeUrl = `/dialog/authorize?redirect_uri=${redirectUrl}&response_type=code&client_id=${req.client.clientId}&scope=offline`;
+          return res.redirect(authorizeUrl);
+        }
 
-            return res.redirect(authorizeUrl);
-          //});
+        req.brute.reset(() => {
+            //log the succesfull login
+            authService.logSuccessFullLogin(req)
+              .then (() => { redirectToAuthorisation(); })
+              .catch (() => { redirectToAuthorisation(); });
+        });
       })
       .catch((err) => {
         next(err);
