@@ -54,7 +54,7 @@ exports.authenticate  = (req, res) => {
   res.render('auth/url/authenticate', {
     clientId: req.query.clientId,
     client: req.client,
-    loginTokenValidDuration: (process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT ? process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT : '60 minuten')
+    loginTokenValidDuration: (process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT ? process.env.LOGIN_TOKEN_VALID_DURATION_IN_TEXT : '60 minuten'),
     redirectUrl: encodeURIComponent(req.query.redirect_uri)
   });
 };
