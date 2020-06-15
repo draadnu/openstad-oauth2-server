@@ -8,7 +8,7 @@ const limitTo           = require('../nunjucks/limitTo');
 const jsonFilter        = require('../nunjucks/json');
 const timestampFilter   = require('../nunjucks/timestamp');
 
-exports.send = function ({subject, toName, toEmail, template, variables, fromEmail, fromName, replyTo}) {
+exports.send = function ({subject, toName, toEmail, templateString, template, variables, fromEmail, fromName, replyTo}) {
 
   // Set current date in readable format
   var currDate = new Date();
@@ -40,7 +40,7 @@ exports.send = function ({subject, toName, toEmail, template, variables, fromEma
   /**
    * Render email template
    */
-  const mail = nunjucks.render(template, variables);
+  const mail = !!templateString ? nunjucks.renderString(templateString, variables) : nunjucks.render(template, variables);
 
   /**
     * Format the to name
@@ -50,10 +50,8 @@ exports.send = function ({subject, toName, toEmail, template, variables, fromEma
   /**
    * If from name & e-mail not specified fallback to default in .env
    */
-
   fromEmail = fromEmail ? fromEmail : process.env.FROM_EMAIL;
   fromName = fromName ? fromName : process.env.FROM_NAME;
-
 
   /**
    * Format Message object
