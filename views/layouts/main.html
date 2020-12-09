@@ -6,7 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="/css/main.css">
 
-  {% if extraCssFile %}
+  {% if clientCss %}
+  <link rel="stylesheet" type="text/css" href="{{ clientCss }}">
+  {% elseif extraCssFile %}
   <link rel="stylesheet" type="text/css" href="{{ extraCssFile }}">
   {% endif %}
 

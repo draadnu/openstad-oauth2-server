@@ -25,7 +25,17 @@
 				</div>
 				{% endif %}
 
-				{% if clientEmail %}
+				{% if (clientContactText and clientContactLink and clientEmail) %}
+				<div class="col-md-4 col-sm-6 col-xs-12">
+					<h2>Contact</h2>
+					<p>
+						{{ clientContactText | safe}}
+					</p>
+					<ul>
+						<li><a href="mailto:{{clientEmail}}">{{ clientContactLink }}</a></li>
+					</ul>
+				</div>
+				{% elseif clientEmail %}
 				<div class="col-md-4 col-sm-6 col-xs-12">
 					<h2>Contact</h2>
 					<p>

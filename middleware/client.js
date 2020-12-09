@@ -41,7 +41,9 @@ exports.withOne = (req, res, next) => {
         res.locals.clientProjectUrl = clientConfig.projectUrl;
         res.locals.clientEmail = clientConfig.contactEmail;
         res.locals.clientDisclaimerUrl = clientConfig.clientDisclaimerUrl;
-
+        res.locals.clientCss = clientConfig && clientConfig.cssFile;
+        res.locals.clientContactText = clientConfig && clientConfig.contactText;
+        res.locals.clientContactLink = clientConfig && clientConfig.contactLink;
 
         req.client.authTypes            = JSON.parse(req.client.authTypes);
         req.client.exposedUserFields    = JSON.parse(req.client.exposedUserFields);
