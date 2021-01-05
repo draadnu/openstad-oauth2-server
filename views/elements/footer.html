@@ -8,6 +8,9 @@
 					<h2>Over deze site</h2>
 					<ul>
 						<li><a href="{{ clientDisclaimerUrl }}">Privacyverklaring</a></li>
+						{% if clientAccessibilityUrl %}
+						<li><a href="{{ clientAccessibilityUrl }}">Toegankelijkheid</a></li>
+						{% endif %}
 					</ul>
 				</div>
 				{% endif %}
