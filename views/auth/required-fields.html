@@ -30,6 +30,11 @@
             required
             name="{{requiredField.key}}"
             class="input-{{requiredField.key}} input-field"
+
+						{% if requiredField.autocomplete %}
+							autocomplete="{{ requiredField.autocomplete }}"
+						{% endif %}
+
           />
 				</div>
         {% endfor %}

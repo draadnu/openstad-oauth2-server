@@ -14,12 +14,16 @@ exports.index = (req, res, next) => {
   const configRequiredFields = config && config.requiredFields ? config.requiredFields : {};
   
   // Replace field labels with labels defined in the client config (if provided)
-  if (configRequiredFields && configRequiredFields.labels) {
+  if (configRequiredFields && (configRequiredFields.labels || configRequiredFields.autocompletes)) {
     requiredUserFields = requiredUserFields.map((field) => {
-      if (configRequiredFields.labels[field.key]) {
+      if (configRequiredFields.labels && configRequiredFields.labels[field.key]) {
         field.label = configRequiredFields.labels[field.key];
       }
-
+      
+      if (configRequiredFields.autocompletes && configRequiredFields.autocompletes[field.key]) {
+        field.autocomplete = configRequiredFields.autocompletes[field.key];
+      }
+      
       return field;
     });
   }

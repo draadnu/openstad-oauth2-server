@@ -1,19 +1,23 @@
 exports.fields = [
   {
     key: 'firstName',
-    label: 'Voornaam'
+    label: 'Voornaam',
+    autocomplete: 'given-name',
   },
   {
     key: 'lastName',
-    label: 'Achternaam'
+    label: 'Achternaam',
+    autocomplete: 'family-name',
   },
   {
     key: 'postcode',
-    label: 'Postcode'
+    label: 'Postcode',
+    autocomplete: 'postal-code',
   },
   {
     key: 'email',
-    label: 'E-mail'
+    label: 'E-mail',
+    autocomplete: 'email',
   },
 ];
 
