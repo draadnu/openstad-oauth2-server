@@ -1,5 +1,8 @@
 # Changelog
 
+## UNRELEASED
+* Add an autocomplete for requiredFields and email
+
 ## v0.13.0 (2020-03-17)
 * Add ellipsis css to login url in email so it will be cut off
 
