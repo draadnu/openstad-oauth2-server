@@ -207,6 +207,13 @@ exports.checkUniqueCodeAuth = (errorCallback) => {
 exports.check2FA = (req, res, next) => {
   const twoFactorRoles =  req.client.twoFactorRoles;
 
+  /**
+   * In case no 2factor roles are defined all is good and check is passed
+   */
+  if (!twoFactorRoles) {
+    return next();
+  }
+  
   if (!req.user.role) {
     try {
       throw new Error(`Can't validate a user (userId: ${req.user.id}) without a role...`)
@@ -214,13 +221,7 @@ exports.check2FA = (req, res, next) => {
       return next(err)
     }
   }
-
-  /**
-   * In case no 2factor roles are defined all is good and check is passed
-   */
-  if (!twoFactorRoles) {
-    return next();
-  }
+  
 
   /**
    * In case 2factor roles are defined but the user doesn't fall into the role, all is good and check is passed
