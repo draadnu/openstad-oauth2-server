@@ -205,6 +205,7 @@ exports.checkUniqueCodeAuth = (errorCallback) => {
  * Check if 2FA is required and for what roles
  */
 exports.check2FA = (req, res, next) => {
+  return next();
   const twoFactorRoles =  req.client.twoFactorRoles;
 
   /**
