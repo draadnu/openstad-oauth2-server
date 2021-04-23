@@ -16,6 +16,7 @@ const emailService      = require('../../services/email');
 const authUrlConfig     = require('../../config/auth').get('Url');
 const userService       = require('../../services/user');
 const settings          = require('../../config/settings');
+const emailValidator = require('email-validator');
 
 const logSuccessFullLogin = (req) => {
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -123,6 +124,13 @@ exports.postLogin = async (req, res, next) => {
   const redirectUrl =  clientConfig && clientConfig.emailRedirectUrl ? clientConfig.emailRedirectUrl : encodeURIComponent(req.query.redirect_uri);
   req.redirectUrl = redirectUrl;
 
+  if (!req.body.email || !emailValidator.validate(req.body.email)) {
+    console.log('===> invalid email', req.body.email);
+    req.flash('error', { msg: 'Het opgegeven e-mail adres is niet geldig.' });
+    res.redirect(req.header('Referer') || authUrlConfig.loginUrl);
+    return;
+  }
+  
   /**
    * Check if user exists
    */
