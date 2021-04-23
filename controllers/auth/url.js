@@ -11,6 +11,7 @@ const User              = require('../../models').User;
 const tokenUrl          = require('../../services/tokenUrl');
 const emailService      = require('../../services/email');
 const authUrlConfig     = require('../../config/auth').get('Url');
+const emailValidator = require('email-validator');
 
 exports.login  = (req, res) => {
   res.render('auth/url/login', {
@@ -84,6 +85,12 @@ exports.postLogin = (req, res, next) => {
   const redirectUrl =  clientConfig && clientConfig.emailRedirectUrl ? clientConfig.emailRedirectUrl : req.query.redirect_uri;
   req.redirectUrl = redirectUrl;
 
+  if (!req.body.email || !emailValidator.validate(req.body.email)) {
+    console.log('===> invalid email', req.body.email);
+    req.flash('error', { msg: 'Het opgegeven e-mail adres is niet geldig.' });
+    res.redirect(req.header('Referer') || authUrlConfig.loginUrl);
+    return;
+  }
 
   /**
    * Check if user exists
