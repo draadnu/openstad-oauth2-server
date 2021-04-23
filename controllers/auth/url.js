@@ -74,11 +74,11 @@ const handleSending = async (req, res, next) => {
     await verificationService.sendVerification(req.user, req.client, req.redirectUrl);
 
     req.flash('success', {msg: '<strong>E-mail verzonden</strong><br />We hebben een e-mail gestuurd naar ' + req.user.email + ' met een link waarmee je eenmalig kan inloggen. <br />De verstuurde link is 48 uur geldig.<br /><br />Houd er rekening mee dat de e-mail misschien in je spambox terecht komt!'});
-    res.redirect('/auth/url/confirmation?clientId=' +  req.client.clientId + '&redirect_uri=' + req.redirectUrl || '/login?clientId=' +  req.client.clientId + '&redirect_uri=' + req.redirectUrl );
+    res.redirect('/auth/url/confirmation?clientId=' +  req.client.clientId || '/login?clientId=' +  req.client.clientId );
   } catch(err) {
     console.log('e0mail error', err);
     req.flash('error', {msg: 'Het is niet gelukt om de e-mail te versturen!'});
-    res.redirect(req.header('Referer') || '/login?clientId=' +  req.client.clientId + '&redirect_uri=' + req.redirectUrl);
+    res.redirect(req.header('Referer') || '/login?clientId=' +  req.client.clientId);
   }
 }
 
