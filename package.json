@@ -17,6 +17,7 @@
     "csurf": "^1.9.0",
     "dotenv": "^6.0.0",
     "ejs": "^2.5.x",
+    "email-validator": "^2.0.4",
     "express": "^4.10.x",
     "express-brute": "^1.0.1",
     "express-flash": "0.0.2",

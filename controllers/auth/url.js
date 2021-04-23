@@ -10,6 +10,7 @@ const tokenUrl          = require('../../services/tokenUrl');
 const authService          = require('../../services/authService');
 const verificationService      = require('../../services/verificationService');
 const authUrlConfig     = require('../../config/auth').get('Url');
+const emailValidator = require('email-validator');
 
 
 const setNoCachHeadersMw = (req, res, next) => {
@@ -102,6 +103,13 @@ exports.postLogin = async (req, res, next) => {
     const clientConfig = req.client.config ? req.client.config : {};
     req.redirectUrl = clientConfig && clientConfig.emailRedirectUrl ? clientConfig.emailRedirectUrl : encodeURIComponent(req.query.redirect_uri);
 
+    if (!req.body.email || !emailValidator.validate(req.body.email)) {
+      console.log('===> invalid email', req.body.email);
+      req.flash('error', { msg: 'Het opgegeven e-mail adres is niet geldig.' });
+      res.redirect(req.header('Referer') || authUrlConfig.loginUrl);
+      return;
+    }
+    
     let user = await getUser(req.body.email);
 
     if (user) {
