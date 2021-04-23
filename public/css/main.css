@@ -7344,7 +7344,7 @@ header {
 }
 .sitelogo .mainlogo:focus,
 .sitelogo .mainlogo.has-focus {
-  outline: 4px solid #093f5d;
+  outline: 4px solid #ffc90e;
 }
 .sitelogo .mainlogo:not(.freeform-logo) .logoset {
   position: absolute;
