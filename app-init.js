@@ -59,7 +59,7 @@ const sessionStore = new FileStore({
 
 // Express configuration
 const app = express();
-const nunjucksEnv = nunjucks.configure('views', { autoescape: true, express: app });
+const nunjucksEnv = nunjucks.configure('views', { autoescape: true, express: app, noCache: true });
 app.set('view engine', 'html');
 app.set('port', process.env.PORT || 4000);
 app.use(express.static(path.join(__dirname, 'public')));
