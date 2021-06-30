@@ -15,6 +15,10 @@ exports.fields = [
     key: 'email',
     label: 'E-mail'
   },
+  {
+    key: 'streetName',
+    label: 'Straatnaam'
+  }
 ];
 
 exports.validation = {
